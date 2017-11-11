@@ -1,0 +1,207 @@
+aside 定义一个页面中独立于主要内容区域的部分，通常表现为边栏
+mark 用来展示文档中被标记或突出显示的文本部分，通常用来高亮文档搜索词
+
+<input type="search"/>
+<input type="color"/>
+<input type="date"/>
+<input type="datetime"/>
+<input type="datetime-local"/>
+<input type="email"/>
+<input type="month"/>
+<input type="number"/>
+<input type="range"/>
+<input type="tel"/>
+<input type="time"/>
+<input type="url"/>
+<input type="week"/>
+
+<input placeholder="input your name"/>  placeholder可以让文本字段在没有输入之前预设一些文本
+
+两种进度条的设置方式，第一种是设置已知进度格式，第二种是设置无知进度格式
+<progress value="50" max="200"></progress>
+<progress/>
+
+进度条二： value值如果在设定的low,high,optimum不同范围内，展示不同颜色
+<meter min="0" max="10" low="3" high="7" optimum="9" value="0"></meter>
+
+折叠内容，折叠是展示<summary>标签处的内容
+<details>
+	<summary>hello every body i'am in china</summary>
+	This country is a beautiful country,has many people, and the house cost losts of money,
+	so many people have no choice,but 
+</details>
+
+
+cookie 存储最大为4096字节，每个域最多存储20个cookie
+
+
+data-* 系列属性  此处data-price表示单价，  min,max 规定此type=number的最小值和最大值， maxlength是规定输入框数据长度 
+<input type="number" date-price="399.99" name="quantity" value="0" min="0" max="99" maxlength="2"/>
+获取其中data-price的数据  var price = element.dataset.price  此处是data-price 所以使用price，使用驼峰法表示dataset的属性
+	eg. data-person-name   element.dataset.personName
+	上述等同于 element.getAttribute("data-price");
+	校验是否支持dataset属性： if(!!qtyFields[i].dataset)
+
+将输出结果显示给用户
+<output name="item_total" class="item_total">$0.00</output>
+	获取output元素： var element = document.forms.formname.outputname;
+	写入output元素值： element.value = newValue;
+	不支持HTML5方式的使用如下方式：
+		document.getElementById("outputId").innerHTML = newValue;
+	校验是否支持output的value方式：if(!!totalFields[i].value)
+		
+
+
+js中获取Input输入是返回字符串,html5提供valueAsNumber转换为浮点数 qtyFields[i].valueAsNumber以替换parseFloat
+	检测浏览器是否支持valueAsNumber
+	if(!!qtyFields[i].valueAsNumber){
+		itemQty = qtyFields[i].valueAsNumber || 0;
+	}else{
+		itemQty = parseFloat(qtyFields[i]||0);
+	}
+
+
+
+
+pattern 是一个正则表达式，用来验证此输入框的数据是否为0~9的13位到16的数值， title规定了如果用户输入不符合正则表达式的提示信息
+<input name="card_number" pattern="[0-9]{13,16}" maxlength="16" required
+                            title="13-16 digits,no spaces"/>
+此处是自定义了提示信息，也可以用setCustomValidity()方法或者validationMessage属性自定义提示信息：此处的提示信息是针对submit按钮有效
+	if('setCustomValidity' in field){
+		field.setCustomValidity(msg);
+	}else{
+		field.validationMessage = msg;
+	}
+	
+	
+此处的formnovalidate是跳过html5中那些required,pattern ......等的验证，formaction是规定点击此Save Order按钮的提交地址							
+<input type="submit" id="saveOrder" value="Save Order" formnovalidate formaction="/save">
+对于不支持HTML5此属性的只有用Js来做：
+	/*
+	* 验证input元素是否支持formAction属性
+	* 如果不支持就需要通过js修改form表单的action路径为saveOrder中配置的formaction路径
+	* */
+	if( !('formAction' in document.createElement('input'))){
+		var formAction = saveBtn.getAttribute('formaction');
+		orderForm.setAttribute('action',formAction);
+	}
+
+表单验证失败，侦听invalid事件，以下两种情况触发invalid事件：
+	1. 用户试图提交表单，但是验证失败
+	2. checkValidity 方法已经被应用调用过，且返回false  checkValidity这个是HTML5用来验证的事件
+	var styleInvalidForm = function(){
+		orderForm.className = 'invalid';
+	}
+	orderForm.addEventListener('invalid',styleInvalidForm,false);
+
+特性侦测：测试浏览器是否支持指定特性,有一个工具js——Modernizr  https://modernizr.com/	
+	使用Modernizr检测是否支持canvas
+		if(Modernizr.canvas){ //support}
+		else { // not support}
+	否则使用原生Js检测：
+		if(!!document.createElement('canvas').getContext){}
+		else{}
+		
+	使用Modernizr动态加载外部资源：
+		Modernizr.load({
+			test:Modernizr.localstorage,
+			yep:'localstorage.js',
+			nope:'localstorage-polyfill.js'
+		});
+	判断浏览器是否支持localstorage API（test:Modernizr.localstorage,），如果支持加载localstorage.js，否则加载localstorage-polyfill.js
+	
+	
+第三章： 文件编辑和管理：富文本格式、文件存储、拖放
+将iframe变为可编辑状态：
+	visualEditor = document.getElementById('file_contents_visual_editor'),  file_contents_visual_editor是iframe元素的id
+    visualEditorDoc = visualEditor.contentDocument,
+	visualEditorDoc.designMode = 'on';//将iframe切换到可编辑状态
+	将在iframe输入的内容保存到iframe中使用如下代码：
+		visualEditorDoc.open();
+		visualEditorDoc.write(content);
+		visualEditorDoc.close();
+		
+execCommand以JS方式执行HTML5的渲染：比如加粗，斜体等
+	/**
+	 * 第一个参数：command含有编辑或格式化行为的名称
+	 * 第二个参数：确定用户能否看到与command相关的默认UI
+	 * 第三个参数value：字符串，execCommand将调入以value为参数的command参数
+	 */
+	visualEditorDoc.execCommand(command,false,prompt(promptText,promptDefault));	
+	PS： prompt 弹出提示框
+	visualEditorDoc.execCommand(command);
+	如下button中的data-command属性都是可以执行command的命令
+		<button data-command="bold"><strong>B</strong></button>
+		<button data-command="italic"><em>I</em></button>
+		<button data-command="underline"><u>U</u></button>
+		<button data-command="strikethrough"><del>S</del></button>
+		<button data-command="insertUnorderedList">List</button>
+		<button data-command="createLink">Link</button>
+		<button data-command="unlink">Unlink</button>
+		<button data-command="insertImage">Image</button>
+		<button data-command="insertMap">Location Map</button>
+	
+		
+					
+使用contenteditable属性可以使页面变得可编辑	
+
+使用navigator.geolocation获取浏览器地理位置：
+	可惜中国不能访问谷歌服务，所以中国无用。
+	getCurrentPosition 第一个参数是请求成功的回调函数，第二个是请求失败的回调函数。
+	/**
+	 * geolcation方式：访问谷歌的服务
+	 * 其位置的获取是通过收集用户周围的无线热点和您 PC 的 IP 地址。
+	 * 然后浏览器把这些信息发送给默认的位置定位服务提供者，也就是谷歌位置服务，由它来计算您的位置。
+	 * 最后用户的位置信息就在您请求的网站上被共享出来。
+	 */
+	if(navigator.geolocation){
+		node.innerHTML = 'Loading';
+		navigator.geolocation.getCurrentPosition(function(pos){
+			var coords = pos.coords.latitude+","+pos.coords.longitude;//维度，和精度
+			var img = 'http://maps.googleapis.com/maps/api/staticmap?markers='+coords+'&zoom=11&size=200x200&' +
+				'sensor=false';
+			console.info(img);
+			visualEditorDoc.execCommand('insertImage',false,img);//此处是执行插入一张地理位置图片的命令
+			node.innerHTML = 'Location Map';
+		});
+
+
+	谷歌服务不支持，只有用百度定位：差了不是一点点，我在松江，浏览器定位到闸北，原因是百度开放的定位API是一个粗糙版的，只能大致定位
+	API：http://lbsyun.baidu.com/index.php?title=jspopular/guide/search
+	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=LIPTlfqNCZgkiKHfW0yd5dEPFNfGIDzq"></script>
+	var geolocation = new BMap.Geolocation();
+	geolocation.getCurrentPosition(function(r){
+		if(this.getStatus() == BMAP_STATUS_SUCCESS){
+			var mk = new BMap.Marker(r.point);
+			var point = new BMap.Point(r.point.lng,r.point.lat);
+
+			var geoc = new BMap.Geocoder();
+			geoc.getLocation(point, function(rs){
+			var addComp = rs.addressComponents;
+			//上海市, 上海市, 闸北区, 天潼路, 619号
+			alert(addComp.province + ", " + addComp.city + ", " + addComp.district + ", " + addComp.street
+					+ ", " + addComp.streetNumber);
+		 });
+		}
+	},{enableHighAccuracy: true});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+                       

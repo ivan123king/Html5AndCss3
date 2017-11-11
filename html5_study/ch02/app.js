@@ -4,24 +4,26 @@
 (function(){
     var init = function(){
         var orderForm = document.forms.order,
-            saveBtn = document.getElementById('saveOrder'),
+        saveBtn = document.getElementById('saveOrder'),
             saveBtnClicked = false;
         var saveForm = function(){
             /*
-            * 验证input元素是否支持formAction属性
-            * 如果不支持就需要通过js修改form表单的action路径为saveOrder中配置的formaction路径
-            * */
+             * 验证input元素是否支持formAction属性
+             * 如果不支持就需要通过js修改form表单的action路径为saveOrder中配置的formaction路径
+             * */
             if( !('formAction' in document.createElement('input'))){
                 var formAction = saveBtn.getAttribute('formaction');
                 orderForm.setAttribute('action',formAction);
             }
             saveBtnClicked = true;
         };
-        saveBtn.addEventListener('click',saveForm,false);
+        EventUtil.addHandler(saveBtn,'click',saveForm);
+        // saveBtn.addEventListener('click',saveForm,false);
 
         //计算总金额
         var qtyFields = orderForm.quantity,
-            totalFields = document.getElementsByClassName('item_total'),
+            // totalFields = document.getElementsByClassName('item_total'),
+            totalFields = EventUtil.getElementByClassName('item_total'),
             orderTotalField = document.getElementById('order_total');
 
         var formatMoney = function(value){
@@ -115,8 +117,11 @@
             var i=0,
                 ln = qtyFields.length;
             for(;i<ln;i++){
-                qtyFields[i].addEventListener('input',calculateTotals,false);
-                qtyFields[i].addEventListener('keyup',calculateTotals,false);
+                // qtyFields[i].addEventListener('input',calculateTotals,false);
+                // qtyFields[i].addEventListener('keyup',calculateTotals,false);
+                EventUtil.addHandler(qtyFields[i],'input',calculateTotals);
+                EventUtil.addHandler(qtyFields[i],'keyup',calculateTotals);
+
             }
         };
         qtyListeners();
@@ -135,6 +140,10 @@
             doCustomValidity(orderForm.confirm_password,'');
             doCustomValidity(orderForm.card_name,'');
 
+            if(!Modernizr.input.required ||!Modernizr.input.pattern){
+                fallbackValidation();//针对IE9不支持HTML5验证，使用JS验证方式。
+            }
+
             if(orderForm.name.value.length<4){
                 doCustomValidity(orderForm.name,'Full name must be at least 4 characters long');
             }
@@ -148,15 +157,100 @@
                 doCustomValidity(order.card_name,'Name on Card must be at least 4 characters long');
             }
         };
-        orderForm.addEventListener('input',validateForm,false);
-        orderForm.addEventListener('keyup',validateForm,false);
+        // orderForm.addEventListener('input',validateForm,false);
+        // orderForm.addEventListener('keyup',validateForm,false);
+        EventUtil.addHandler(orderForm,'input',validateForm);
+        EventUtil.addHandler(orderForm,'keyup',validateForm);
 
         //侦听表单验证invalid事件
         var styleInvalidForm = function(){
             orderForm.className = 'invalid';
         }
-        orderForm.addEventListener('invalid',styleInvalidForm,false);
+        // orderForm.addEventListener('invalid',styleInvalidForm,false);
+        EventUtil.addHandler(orderForm,'invalid',styleInvalidForm);
 
+        //部署特性侦测，對不支持時間控件的瀏覽器額外自己加載monthpicker.js
+        Modernizr.load({
+           test:Modernizr.inputtypes.month,
+            nope: 'monthpicker.js'
+        });
+
+        //對於不支持HTML5驗證的瀏覽器，手動驗證
+        var getFieldLabel = function(field){
+            if('labels' in field && field.labels.length>0){
+                return field.labels[0].innerText;
+            }
+            if(field.parentNode&&field.parentNode.tagName.toLowerCase()==='label'){
+                return field.parentNode.innerText;
+            }
+            return '';
+        }
+        //Safari5.1中阻止无效表单的提交
+        var submitForm = function(e){
+            if(!saveBtnClicked){//如果点击的不是保存按钮
+                validateForm();
+                var i=0,
+                    ln = orderForm.length,
+                    field,
+                    errors = [],
+                    errorFields = [],
+                    errorMsg = '';
+                for(;i<ln;i++){
+                    field = orderForm[i];
+                    if((!!field.validationMessage&&field.validationMessage.length>0)
+                        ||(!!field.checkValidity&&!field.checkValidity())){
+                        errors.push(getFieldLabel(field)+':'+field.validationMessage);
+                        errorFields.push(field);
+                    }
+                }
+                if(errors.length>0){
+                    e.preventDefault();
+                    errorMsg = errors.join('\n');
+                    alert('Please fix the following errors:\n'+errorMsg,'Error');
+                    orderForm.className = 'invalid';
+                    errorFields[0].focus();
+                }
+            }
+        };
+        orderForm.addEventListener('submit',submitForm,false);
+
+        //IE9验证回退方案，IE9不支持验证type=email,pattern等这些Input的HTML5属性，使用如下js验证
+        var fallbackValidation = function(){
+            var i=0,
+                ln = orderForm.length,
+                field;
+            for(;i<ln;i++){
+                field = orderForm[i];
+                doCustomValidity(field,'');
+                if(field.hasAttribute('pattern')){
+                    var pattern = new RegExp(field.getAttribute('pattern').toString());
+                    if(!pattern.test(field.value)){
+                        var msg = 'Please match the requested format.';
+                        if(field.hasAttribute('title')&&field.getAttribute('title').length>0){
+                            msg += ' '+field.getAttribute('title');
+                        }
+                        doCustomValidity(field,msg);
+                    }
+                }
+                if(field.hasAttribute('type')&&field.getAttribute('type').toLowerCase()==='email'){
+                    var pattern = new RegExp(/\S+@\S+\.\S+/);
+                    if(!pattern.test(field.value)){
+                        doCustomValidity(field,'Please enter an email address.');
+                    }
+                }
+                if(field.hasAttribute('requeired')&&field.value.length<1){
+                    doCustomValidity(field,'Please fill out this field.');
+                }
+            }
+        }
     };
-    window.addEventListener('load',init,false);
+
+    EventUtil.addHandler(window,'load',init);
+    // var browser = navigator.userAgent;
+    // if(browser.indexOf("MSIE")>=0){//IE
+    //     window.load = init();
+    // }
+    // else if(browser.indexOf("Chrome")>=0){//Chrome
+    //     window.addEventListener('load',init,false);
+    // }
 })();
