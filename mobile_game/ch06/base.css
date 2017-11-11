@@ -1,0 +1,8 @@
+#container{
+    padding-top:50px;
+    margin:0 auto;
+    width:480px;
+}
+canvas{
+    background-color: green;
+}

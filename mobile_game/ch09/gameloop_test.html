@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="jquery-3.1.1.min.js"></script>
+    <script src="underscore-1.7.0.js"></script>
+    <script src="quintus.js"></script>
+    <!--<script src="test.js"></script>-->
+</head>
+<body>
+    <div id="timer">0</div>
+    <div id="fps">0</div>
+    <button id="pause">Pause</button>
+    <button id="unpause">Unpause</button>
+    <!--<img id="img01" src="images/img01.jpg" style="width:200px;height:200px;"/>-->
+</body>
+
+<script>
+//    var TimerTest = Quintus();
+//    var totalFrames = 0,
+//            totalTime = 0;
+//    TimerTest.gameLoop(function(dt){
+//        totalTime += dt;
+//        totalFrames +=1;
+//        $("#timer").text(Math.round(totalTime*1000)+"MS");
+//        $("#fps").text(Math.round(totalFrames/totalTime)+"FPS");
+//    });
+//    $("#pause").on("click",TimerTest.pauseGame);
+//
+//    $("#unpause").on("click",TimerTest.unpauseGame);
+
+    //test Class Code
+//    var Person = Class.extend({
+//        init:function(){ console.log("Create Person");},
+//        speak:function(){ console.log("Person speaking:");}
+//    });
+//    var p = new Person();
+//    p.speak();
+//    var Guy = Person.extend({
+//        init:function(){ this._super(); console.log('Create Guy!');},
+//        speak:function(){ this._super();console.log("I'm a Guy!");}
+//    });
+//    var bob = new Guy();
+//    bob.speak();
+
+//查看鼠标点击是是否在图片内
+    window.addEventListener("click",function(e){
+        var img01 = document.getElementById("img01");
+        console.log(e.clientX+":"+img01.x+":"+img01.width+":"+e.clientY+":"+img01.y+":"+img01.height)
+        if(e.clientX>img01.x&&e.clientX<img01.x+img01.width&&e.clientY>img01.y&&e.clientY<img01.y+img01.height)
+            console.info("true")
+        else console.info("false");
+    },false);
+
+</script>
+</html>

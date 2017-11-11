@@ -1,0 +1,72 @@
+drawImage:
+    context.drawImage(img,x,y);
+    context.drawImage(img,x,y,width,height);
+    context.drawImage(img,sx,sy,swidth,sheight,x,y,width,height);
+    参数	描述
+    参数	描述
+    img	规定要使用的图像、画布或视频。
+    sx	可选。开始剪切的 x 坐标位置。
+    sy	可选。开始剪切的 y 坐标位置。
+    swidth	可选。被剪切图像的宽度。
+    sheight	可选。被剪切图像的高度。
+    x	在画布上放置图像的 x 坐标位置。
+    y	在画布上放置图像的 y 坐标位置。
+    width	可选。要使用的图像的宽度。（伸展或缩小图像）
+    height	可选。要使用的图像的高度。（伸展或缩小图像）
+
+ ctx.fillStyle = "rgba(0,0,128,0.5)";
+    /**
+     * R：红色值。正整数 | 百分数
+     G：绿色值。正整数 | 百分数
+     B：蓝色值。正整数| 百分数
+     A：透明度。取值0~1之间
+     */
+
+http://fonts.googleapis.com/css?family=Bangers  中内容：
+/* vietnamese */
+@font-face {
+  font-family: 'Bangers';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Bangers Regular'), local('Bangers-Regular'), url(http://fonts.gstatic.com/s/bangers/v9/yjktir_43gNaWE8rA3otrfY6323mHUZFJMgTvxaG2iE.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Bangers';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Bangers Regular'), local('Bangers-Regular'), url(http://fonts.gstatic.com/s/bangers/v9/-uSFLBVRk2gTemIlGOaMX_Y6323mHUZFJMgTvxaG2iE.woff2) format('woff2');
+  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Bangers';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Bangers Regular'), local('Bangers-Regular'), url(http://fonts.gstatic.com/s/bangers/v9/yJQgrSMUoqRj-0SbnQsv4g.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215;
+}
+
+scrollTo() 方法可把内容滚动到指定的坐标。
+    scrollTo(xpos,ypos)
+    必需。要在窗口文档显示区左上角显示的文档的 x 坐标。
+    必需。要在窗口文档显示区左上角显示的文档的 y 坐标。
+
+splice: 方法向/从数组中添加/删除项目，然后返回被删除的项目
+    arrayObject.splice(index,howmany,item1,.....,itemX)
+    index	必需。整数，规定添加/删除项目的位置，使用负数可从数组结尾处规定位置。
+    howmany	必需。要删除的项目数量。如果设置为 0，则不会删除项目。
+    item1, ..., itemX	可选。向数组添加的新项目。
+
+parseInt(string, radix)
+    string	必需。要被解析的字符串。
+    radix	表示进制
+    可选。表示要解析的数字的基数。该值介于 2 ~ 36 之间。
+    如果省略该参数或其值为 0，则数字将以 10 为基础来解析。如果它以 “0x” 或 “0X” 开头，将以 16 为基数。
+如果该参数小于 2 或者大于 36，则 parseInt() 将返回 NaN。
+
+atan2() 方法可返回从 x 轴到点 (x,y) 之间的角度
+    Math.atan2(y,x)
+    x	必需。指定点的 X 坐标。
+    y	必需。指定点的 Y 坐标。

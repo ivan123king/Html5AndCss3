@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!--<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">-->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>Title</title>
+    <link rel="stylesheet" href="base.css" type="text/css"/>
+    <link rel="apple-touch-startup-image" media="(max-device-width:480px) and not (-webkit-min-device-pixel-ratio:2)"
+          href="images/firegirl.jpg"/>
+    <link rel="apple-touch-icon" href="images/firegirl.jpg"/>
+    <script src="js/jquery-3.1.1.min.js"></script>
+</head>
+<body>
+    <div id="container">
+        <canvas id="game" width="480" height="480"></canvas>
+    </div>
+</body>
+
+<script>
+    //根据浏览器的大小来设置画布宽高
+    $(function(){
+        var maxWidth = 480;
+        var maxHeight = 440;
+        var initialWidth = $("#game").attr("width");
+        var initialHeight = $("#game").attr("height");
+        var touchDevice = !!("ontouchstart" in document);
+        var handleResize = function(){
+            var w = window.innerWidth|| window.document.documentElement.clientWidth||window.document.body.clientWidth;
+            var h = window.innerHeight||window.document.documentElement.clientHeight||window.document.body.clientHeight;
+            var newDim;
+            if(w<=maxWidth&&touchDevice){
+                newDim = {width:Math.min(w,maxWidth),height:Math.min(h,maxHeight)};
+                $("#game").css({position:"absolute",left:0,top:0});
+                $("#container").css('width','auto');
+            }else{
+                newDim = {width:initialWidth,height:initialHeight};
+                $("#game").css("position","relative");
+                $("#container").css("width",maxWidth);
+            }
+            $("#game").attr(newDim);
+        }
+        var resizeEvent = touchDevice? "orientationchange":"resize";
+        $(window).bind(resizeEvent,handleResize);
+//        document.addEventListener('touchmove',function(event){
+//            event.preventDefault();
+//        },{passive:false});
+//        $(document).on("touchmove",function(event){
+//           event.preventDefault();
+//        });
+//        $("#game").on("touchmove",function(event){
+//           event.preventDefault();
+//        });
+        handleResize();
+    });
+</script>
+
+</html>

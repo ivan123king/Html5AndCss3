@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="js/jquery-3.1.1.min.js"></script>
+    <script src="js/underscore-1.7.0.js"></script>
+</head>
+<body>
+<div id='container'></div>
+</body>
+
+<script>
+    //一个不断冒出方块的小游戏
+    var width = $(window).width(),height= $(window).height(),
+            countdown = 20,countup = 0;
+    var nextElement = function(){
+        if(countdown==0){
+            gameOver();
+            return ;
+        }
+        var x = Math.random()*(width-50),
+             y = Math.random()*(height-50);
+        $("<div>").css({
+            position:"absolute",
+            left:x,top:y,
+            width:50,height:50,
+            backgroundColor:"red"
+        }).appendTo("#container");
+        countdown--;
+    }
+    var gameOver = function(){
+        clearInterval(timer);
+        if(countup>15){
+            alert("you won !");
+        }else{
+            alert("you lost !");
+        }
+    }
+    var timer = setInterval(nextElement,500);
+    var lastLeft = -100;
+    $("#container").on("mousedown","div",function(e){
+        if($(e.target).css("left")!=lastLeft){
+            countup++;
+            lastLeft = $(e.target).css("left");
+        }
+//        console.log(e.target.style.left+":"+countup);
+        $(this).fadeOut();
+    })
+
+</script>
+</html>
